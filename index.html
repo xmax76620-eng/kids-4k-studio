@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kids 4K Studio — L'Excellence</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#05050a;--panel:#0d0d18;--panel-2:#151527;--border:#2a2a4a;--ink:#ffffff;--ink-dim:#a0a0c0;--ink-faint:#606080;--accent:#ff007f;--accent-2:#00d2ff;--accent-3:#9d00ff;--success:#00e676;--error:#ff1744;--warn:#ffea00;--radius:20px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:1.5rem 1rem 6rem;font-size:15px;line-height:1.5;max-width:900px;margin:0 auto;background-image:radial-gradient(circle at 15% 50%, rgba(157,0,255,.08), transparent 25%),radial-gradient(circle at 85% 30%, rgba(0,210,255,.08), transparent 25%)}
+header{margin-bottom:2rem;text-align:center;position:relative}
+h1{font-size:2rem;font-weight:900;margin-bottom:.3rem;background:linear-gradient(135deg,#ff007f,#9d00ff,#00d2ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.03em;text-shadow:0 0 30px rgba(157,0,255,.3)}
+.subtitle{font-size:.9rem;color:var(--ink-dim);font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.toast{position:fixed;top:1.5rem;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(13,13,24,.95);backdrop-filter:blur(10px);color:#fff;padding:1rem 1.5rem;border-radius:16px;font-size:.9rem;z-index:3000;opacity:0;transition:all .4s cubic-bezier(0.4, 0, 0.2, 1);max-width:90vw;text-align:center;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 32px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.1);border:1px solid var(--border)}
+.toast.visible{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.success{background:rgba(0,230,118,.15);border-color:var(--success);color:var(--success)}
+.toast.error{background:rgba(255,23,68,.15);border-color:var(--error);color:var(--error)}
+.toast.warn{background:rgba(255,234,0,.15);border-color:var(--warn);color:var(--warn)}
+.info-banner{background:linear-gradient(135deg,rgba(255,0,127,.1),rgba(157,0,255,.1),rgba(0,210,255,.1));border:1px solid rgba(157,0,255,.3);padding:1.2rem;border-radius:var(--radius);font-size:.85rem;margin-bottom:1.5rem;line-height:1.6;box-shadow:inset 0 0 20px rgba(157,0,255,.1)}
+.api-panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.5rem;box-shadow:0 4px 20px rgba(0,0,0,.4);position:relative;overflow:hidden}
+.api-panel::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3))}
+.api-panel.ok{border-color:var(--success);box-shadow:0 0 20px rgba(0,230,118,.2)}
+.api-key-input{width:100%;padding:1rem;border-radius:12px;border:1px solid var(--border);background:var(--panel-2);color:var(--ink);font-family:monospace;font-size:.9rem;margin-bottom:.8rem;transition:all .3s}
+.api-key-input:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 15px rgba(0,210,255,.2)}
+.api-save-btn{width:100%;padding:1rem;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-3));color:#fff;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:.8rem;letter-spacing:.05em;text-transform:uppercase;box-shadow:0 4px 15px rgba(157,0,255,.4);transition:all .3s}
+.api-save-btn:active{transform:scale(.98);box-shadow:0 2px 10px rgba(157,0,255,.3)}
+.api-status-line{font-size:.8rem;padding:.7rem .9rem;border-radius:10px;margin-bottom:.6rem;display:flex;align-items:center;gap:.6rem;background:var(--panel-2);color:var(--ink-dim);border:1px solid transparent;transition:all .3s}
+.api-status-line.ok{background:rgba(0,230,118,.1);color:var(--success);font-weight:600;border-color:rgba(0,230,118,.3)}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--ink-faint);transition:all .3s}
+.api-status-line.ok .status-dot{background:var(--success);box-shadow:0 0 10px var(--success)}
+.api-hint{font-size:.75rem;color:var(--ink-dim);margin-top:.6rem;text-align:center}
+.api-hint a{color:var(--accent-2);text-decoration:none;font-weight:600}
+.stat-line{font-size:.75rem;color:var(--ink-dim);margin-top:.8rem;padding:.6rem .8rem;background:var(--panel-2);border-radius:10px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.4rem}
+.wake-status{font-size:.75rem;padding:.7rem .9rem;border-radius:10px;margin-top:.6rem;display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);color:var(--ink-dim);flex-wrap:wrap;gap:.4rem;border:1px solid transparent;transition:all .3s}
+.wake-status.active{background:rgba(0,230,118,.1);color:var(--success);border-color:rgba(0,230,118,.3)}
+.wake-status button{background:transparent;border:1px solid currentColor;color:inherit;padding:.4rem .8rem;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
+.wake-status button:active{transform:scale(.95)}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:3rem 1.5rem;text-align:center;cursor:pointer;margin-bottom:1.5rem;background:rgba(13,13,24,.6);transition:all .3s;position:relative;overflow:hidden}
+.upload-zone::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(157,0,255,.1),transparent);transition:left .5s}
+.upload-zone:hover::before{left:100%}
+.upload-zone:active{border-color:var(--accent);background:rgba(157,0,255,.05)}
+.upload-zone input[type=file]{display:none}
+.upload-icon{font-size:3rem;margin-bottom:1rem;filter:drop-shadow(0 0 15px rgba(157,0,255,.5))}
+.upload-text{font-size:1.2rem;margin-bottom:.4rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.upload-hint{font-size:.85rem;color:var(--ink-dim);font-weight:500}
+.images-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.8rem;margin-bottom:1.5rem}
+.image-card{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--border);background:#000;aspect-ratio:9/16;box-shadow:0 4px 15px rgba(0,0,0,.5)}
+.image-card img{width:100%;height:100%;object-fit:cover}
+.remove-btn{position:absolute;top:6px;right:6px;background:rgba(255,23,68,.9);color:#fff;border:none;width:28px;height:28px;border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.section{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.5rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.section-header{padding:1.2rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.section-header:active{background:var(--panel-2)}
+.section-title{font-size:.85rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-2);font-weight:900;display:flex;align-items:center;gap:.5rem}
+.section-header .chevron{font-size:.8rem;color:var(--ink-faint);transition:transform .3s}
+.section.open .section-header .chevron{transform:rotate(180deg)}
+.section-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.section.open .section-body{max-height:15000px}
+.section-content{padding:0 1.2rem 1.2rem}
+.styles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.8rem}
+.style-card{padding:1rem;border-radius:16px;border:1px solid var(--border);background:var(--panel-2);cursor:pointer;display:flex;align-items:center;gap:.8rem;transition:all .2s;position:relative;overflow:hidden}
+.style-card:active{transform:scale(.97)}
+.style-card.selected{border-color:var(--accent);background:linear-gradient(135deg,rgba(255,0,127,.15),rgba(157,0,255,.15));box-shadow:0 0 20px rgba(255,0,127,.2)}
+.style-emoji{font-size:2rem;filter:drop-shadow(0 0 8px rgba(255,255,255,.2))}
+.style-name{font-size:.95rem;font-weight:800;line-height:1.2;color:var(--ink)}
+.style-desc{font-size:.75rem;color:var(--ink-dim);margin-top:.2rem;line-height:1.3}
+.style-category-header{grid-column:1/-1;font-size:.8rem;font-weight:900;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;padding:1rem 0 .5rem;border-bottom:2px solid var(--border);margin-bottom:.5rem;text-shadow:0 0 10px rgba(255,0,127,.3)}
+.style-category-header:first-child{padding-top:0;border-bottom:none}
+.style-category-desc{grid-column:1/-1;font-size:.75rem;color:var(--ink-dim);font-style:italic;margin-bottom:.6rem;line-height:1.4}
+.prompt-main{width:100%;padding:1rem;border-radius:16px;border:1px solid var(--border);background:var(--panel-2);color:var(--ink);font-family:inherit;font-size:.95rem;min-height:120px;resize:vertical;line-height:1.6;transition:all .3s}
+.prompt-main:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 15px rgba(0,210,255,.1)}
+.prompt-hint{font-size:.75rem;color:var(--ink-dim);margin-top:.6rem;line-height:1.5}
+.control-row{margin-bottom:1.2rem}
+.control-label{display:block;font-size:.8rem;color:var(--ink-dim);margin-bottom:.5rem;text-transform:uppercase;font-weight:800;letter-spacing:.05em}
+select{width:100%;padding:.9rem 1rem;border-radius:12px;border:1px solid var(--border);background:var(--panel-2);color:var(--ink);font-family:inherit;font-size:.95rem;font-weight:600;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%2300d2ff' d='M0 0l6 8 6-8z'/></svg>");background-repeat:no-repeat;background-position:right 1rem center;background-size:12px;transition:all .3s}
+select:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 15px rgba(0,210,255,.1)}
+.btn-primary{width:100%;padding:1.4rem;border-radius:var(--radius);border:none;background:linear-gradient(135deg,var(--accent),var(--accent-3),var(--accent-2));background-size:200% 200%;animation:gradientMove 3s ease infinite;color:#fff;font-size:1.15rem;font-weight:900;cursor:pointer;margin-bottom:1.5rem;box-shadow:0 8px 30px rgba(157,0,255,.5);letter-spacing:.05em;text-transform:uppercase;transition:all .3s}
+.btn-primary:active:not(:disabled){transform:scale(.98);box-shadow:0 4px 20px rgba(157,0,255,.4)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;animation:none;background:#333}
+@keyframes gradientMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.btn-stop{width:100%;padding:1rem;border-radius:var(--radius);border:1px solid var(--error);background:rgba(255,23,68,.1);color:var(--error);font-size:.95rem;font-weight:800;cursor:pointer;margin-bottom:1.5rem;display:none;transition:all .3s}
+.btn-stop.visible{display:block}
+.btn-stop:active{background:rgba(255,23,68,.2)}
+.queue{margin-top:1.5rem}
+.queue-summary{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:1rem;margin-bottom:.8rem;font-size:.85rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;font-weight:700;color:var(--accent-2);box-shadow:0 4px 15px rgba(0,0,0,.3)}
+.queue-item{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:16px;border:1px solid var(--border);margin-bottom:.6rem;background:var(--panel);font-size:.9rem;transition:all .3s}
+.queue-item.pending{opacity:.6}
+.queue-item.creating{border-color:var(--warn);box-shadow:0 0 15px rgba(255,234,0,.1)}
+.queue-item.processing{border-color:var(--accent);box-shadow:0 0 15px rgba(255,0,127,.2)}
+.queue-item.done{border-color:var(--success);box-shadow:0 0 15px rgba(0,230,118,.2)}
+.queue-item.failed{border-color:var(--error);box-shadow:0 0 15px rgba(255,23,68,.2)}
+.q-icon{font-size:1.3rem;width:2rem;text-align:center}
+.q-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.q-status{font-size:.8rem;color:var(--ink-dim);font-weight:600}
+.gallery{margin-top:2rem}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem}
+.gallery-item{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);background:#000;box-shadow:0 8px 25px rgba(0,0,0,.6);transition:transform .3s}
+.gallery-item:active{transform:scale(.98)}
+.gallery-item video{width:100%;display:block;aspect-ratio:9/16;object-fit:cover;background:#000}
+.g-caption{padding:.6rem .8rem;background:var(--panel);font-size:.8rem;color:var(--ink-dim);text-align:center;font-weight:700}
+.g-actions{display:flex;gap:.4rem;padding:.5rem}
+.g-actions button{flex:1;padding:.7rem;border:none;border-radius:10px;font-size:.8rem;font-weight:800;cursor:pointer;color:#fff;transition:all .2s}
+.g-actions button:active{transform:scale(.95)}
+.g-download{background:linear-gradient(135deg,#00e676,#00b248);box-shadow:0 4px 10px rgba(0,230,118,.3)}
+.g-tiktok{background:linear-gradient(135deg,#ff007f,#00d2ff);box-shadow:0 4px 10px rgba(0,210,255,.3)}
+.tiktok-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.98);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(5px)}
+.tiktok-overlay.visible{display:flex}
+.tiktok-phone{width:100%;max-width:380px;height:calc(100vh - 2rem);max-height:800px;background:#000;border-radius:32px;overflow:hidden;position:relative;border:4px solid #222;box-shadow:0 0 50px rgba(157,0,255,.3)}
+.tiktok-video{width:100%;height:100%;object-fit:cover;display:block}
+.tiktok-ui{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
+.tiktok-top{display:flex;justify-content:space-between;padding:1.2rem;color:#fff;font-size:.9rem;font-weight:800;text-shadow:0 2px 5px rgba(0,0,0,.8)}
+.tiktok-top .active{border-bottom:2px solid #fff;padding-bottom:.3rem}
+.tiktok-right{position:absolute;right:.8rem;bottom:6rem;display:flex;flex-direction:column;gap:1.5rem;align-items:center;color:#fff}
+.tiktok-btn{display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.75rem;font-weight:800;text-shadow:0 2px 5px rgba(0,0,0,.8)}
+.tiktok-btn .icon{font-size:2.2rem;filter:drop-shadow(0 2px 5px rgba(0,0,0,.5))}
+.tiktok-bottom{position:absolute;left:.8rem;right:6rem;bottom:1.5rem;color:#fff}
+.tiktok-user{font-size:.95rem;font-weight:900;margin-bottom:.4rem;text-shadow:0 2px 5px rgba(0,0,0,.8)}
+.tiktok-desc{font-size:.85rem;line-height:1.4;margin-bottom:.6rem;text-shadow:0 2px 5px rgba(0,0,0,.8)}
+.tiktok-music{font-size:.8rem;opacity:.9;display:flex;align-items:center;gap:.4rem;text-shadow:0 2px 5px rgba(0,0,0,.8)}
+.tiktok-close{position:absolute;top:1.2rem;left:1.2rem;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:1.2rem;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.tiktok-publish{position:absolute;bottom:1.5rem;right:.8rem;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#ff007f,#00d2ff);border:none;color:#fff;font-size:1.6rem;cursor:pointer;z-index:10;box-shadow:0 4px 20px rgba(255,0,127,.6);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.tiktok-publish:active{transform:scale(.9)}
+.status-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(13,13,24,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);color:var(--ink);padding:1rem;font-size:.85rem;display:flex;align-items:center;gap:.8rem;transform:translateY(100%);transition:transform .3s;z-index:100;font-weight:600}
+.status-bar.visible{transform:translateY(0)}
+.spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent-2);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#noSleepCanvas,#noSleepVideo{position:fixed;top:0;left:0;width:1px;height:1px;opacity:.01;pointer-events:none;z-index:-1}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Kids 4K Studio</h1>
+<p class="subtitle">L'Excellence Visuelle</p>
+</header>
+
+<div class="info-banner">
+<strong>✨ L'ultime expérience :</strong> Transforme tes photos en vidéos 9:16 d'une qualité exceptionnelle. Chaque détail compte. Chaque image est une œuvre d'art.
+</div>
+
+<div class="api-panel" id="api-panel">
+<input type="text" class="api-key-input" id="api-key-input" placeholder="Collez votre clé API ici (sk-...)" autocomplete="off" spellcheck="false">
+<button type="button" class="api-save-btn" id="api-save-btn">Enregistrer la clé</button>
+<div class="api-status-line" id="api-status-line">
+<span class="status-dot"></span>
+<span id="api-status-text">Aucune clé API enregistrée</span>
+</div>
+<div class="api-hint">Clé sur <a href="https://platform.agnes-ai.com" target="_blank">platform.agnes-ai.com</a></div>
+<div class="stat-line">
+<span>📊 Vitesse : <span id="stat-speed">en attente</span></span>
+<span id="stat-samples">0 génération</span>
+</div>
+<div class="wake-status" id="wake-status">
+<span id="wake-status-text">💤 Veille automatique</span>
+<button type="button" id="wake-toggle-btn">Garder l'écran allumé</button>
+</div>
+</div>
+
+<div class="upload-zone" id="upload-zone">
+<input type="file" id="file-input" accept="image/*" multiple>
+<div class="upload-icon">💎</div>
+<div class="upload-text">Ajoute tes photos</div>
+<div class="upload-hint">La qualité visuelle commence par la source</div>
+</div>
+
+<div class="images-grid" id="images-grid"></div>
+
+<div class="section open" id="section-style">
+<div class="section-header" data-toggle="section-style">
+<span class="section-title">🎨 Style Visuel Ultime</span>
+<span class="chevron">▼</span>
+</div>
+<div class="section-body">
+<div class="section-content">
+<div class="styles-grid" id="styles-grid"></div>
+</div>
+</div>
+</div>
+
+<div class="section open" id="section-prompt">
+<div class="section-header" data-toggle="section-prompt">
+<span class="section-title">✍️ Direction Artistique</span>
+<span class="chevron">▼</span>
+</div>
+<div class="section-body">
+<div class="section-content">
+<textarea class="prompt-main" id="main-prompt" placeholder="Décris ta vision. Exemple : Un coucher de soleil éclatant sur une mer cristalline, lumière dorée irréelle, style chef-d'œuvre Pixar."></textarea>
+<div class="prompt-hint">💡 Si vide, le style sélectionné gère le prompt.</div>
+</div>
+</div>
+</div>
+
+<div class="section" id="section-tech">
+<div class="section-header" data-toggle="section-tech">
+<span class="section-title">⚙️ Réglages de Précision</span>
+<span class="chevron">▼</span>
+</div>
+<div class="section-body">
+<div class="section-content">
+<div class="control-row">
+<label class="control-label">Durée</label>
+<select id="duration-select">
+<option value="121">5 secondes</option>
+<option value="153" selected>6,4 secondes</option>
+<option value="241">10 secondes</option>
+</select>
+</div>
+<div class="control-row">
+<label class="control-label">Intensité du mouvement</label>
+<select id="intensity-select">
+<option value="random">Aléatoire</option>
+<option value="subtle">Subtile</option>
+<option value="moderate" selected>Modérée</option>
+<option value="strong">Forte</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+
+<button type="button" class="btn-primary" id="generate-btn" disabled>Créer l'œuvre</button>
+<button type="button" class="btn-stop" id="stop-btn">⏹ Arrêter</button>
+
+<div class="queue" id="queue" style="display:none;"></div>
+
+<div class="gallery" id="gallery" style="display:none;">
+<div class="section-title" style="margin-bottom:1rem;">🎬 Tes Œuvres</div>
+<div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<div class="tiktok-overlay" id="tiktok-overlay">
+<div class="tiktok-phone">
+<button class="tiktok-close" id="tiktok-close">✕</button>
+<video class="tiktok-video" id="tiktok-video" controls autoplay loop playsinline></video>
+<div class="tiktok-ui">
+<div class="tiktok-top">
+<span>Abonnements</span>
+<span class="active">Pour toi</span>
+</div>
+<div class="tiktok-right">
+<div class="tiktok-btn"><span class="icon">❤️</span><span id="tiktok-likes">0</span></div>
+<div class="tiktok-btn"><span class="icon">💬</span><span id="tiktok-comments">0</span></div>
+<div class="tiktok-btn"><span class="icon">↗️</span><span id="tiktok-shares">0</span></div>
+</div>
+<div class="tiktok-bottom">
+<div class="tiktok-user">@kids4k.studio</div>
+<div class="tiktok-desc" id="tiktok-desc">L'excellence visuelle 🎬✨ #cinema #IA</div>
+<div class="tiktok-music">🎵 Son original - Kids 4K</div>
+</div>
+</div>
+<button class="tiktok-publish" id="tiktok-publish" title="Publier sur TikTok">📤</button>
+</div>
+</div>
+
+<div class="status-bar" id="status-bar">
+<div class="spinner"></div>
+<span id="status-text">Préparation…</span>
+</div>
+
+<div class="toast" id="toast">
+<span class="toast-icon" id="toast-icon">✓</span>
+<span id="toast-text">Message</span>
+</div>
+
+<canvas id="noSleepCanvas" width="2" height="2"></canvas>
+<video id="noSleepVideo" playsinline muted loop></video>
+
+<script>
+var API_BASE='https://apihub.agnes-ai.com/v1';
+var POLL_BASE='https://apihub.agnes-ai.com/agnesapi';
+var MODEL_VIDEO='agnes-video-v2.0';
+var FRAME_RATE=24;
+var createIntervalMs=62000;
+var CREATE_INTERVAL_MIN=62000;
+var CREATE_INTERVAL_MAX=90000;
+var POLL_INTERVAL_SEC=8;
+var MAX_POLL_ATTEMPTS=100;
+var API_KEY_STORAGE='kids4k_api_key';
+var WAKE_LOCK_PREF='kids4k_wakelock';
+var MAX_VISIBLE_QUEUE=30;
+var MAX_IMAGE_SIZE=12582912;
+var THUMBNAIL_MAX_WIDTH=200;
+  
+var STYLES=[
+{cat:'🍼 Bébés d\'exception',desc:'La pureté et l\'innocence sublimées.',items:[
+{id:'baby-angel',emoji:'👼',name:'Ange Céleste',desc:'Ailes et auréole',prompt:'8K ultra HD, chef-d\'œuvre absolu 3D photoréaliste style Pixar. Un bébé ange adorable avec des ailes de plumes blanches translucides et une auréole dorée lumineuse. Peau parfaite avec subsurface scattering, yeux hypnotiques avec catchlights, sourire divin. Lumière céleste dorée, nuages pastel, étoiles scintillantes. Rendu 16K cinématographique, profondeur de champ extrême. Format 9:16 vertical.'},
+{id:'baby-princess',emoji:'👑',name:'Petite Princesse',desc:'Robe et couronne',prompt:'8K ultra HD, 3D photoréaliste style Disney/Pixar. Une petite fille bébé dans une robe de princesse scintillante avec une couronne en diamants. Grands yeux brillants, sourire éclatant. Château de conte de fées en arrière-plan, lumières magiques, pétales de fleurs flottants. Éclairage féérique doré. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'baby-nature',emoji:'🌿',name:'Esprit de la Forêt',desc:'Feuilles et lucioles',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un bébé adorable entouré de feuilles d\'automne et de lucioles magiques. Il porte un petit manteau en laine. Joues roses, yeux brillants. Forêt enchantée en arrière-plan, lumière filtrant à travers les arbres. Ambiance chaleureuse et poétique. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'baby-stars',emoji:'🌌',name:'Enfant des Étoiles',desc:'Cosmos et nébuleuse',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un bébé flottant doucement dans un espace cosmique coloré, entouré de planètes pastel, de nébuleuses et d\'étoiles filantes. Il porte un petit pyjama étoilé. Grands yeux émerveillés, sourire pur. Ambiance onirique et magique. Rendu 16K cinématographique. Format 9:16 vertical.'}
+]},
+{cat:'🦁 Animaux fantastiques',desc:'La mignonnerie à l\'état pur.',items:[
+{id:'puppy-fluffy',emoji:'🐶',name:'Chiot duveteux',desc:'Boule de poils',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un chiot adorable extrêmement duveteux avec de grands yeux tristes et mignons. Il tient un petit ballon dans sa gueule. Pelage ultra détaillé, reflets de lumière naturelle. Fond de salon chaleureux flou (bokeh). Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'kitten-playful',emoji:'🐱',name:'Chaton joueur',desc:'Yeux malicieux',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un chaton espiègle avec des yeux verts brillants, prêt à bondir sur un jouet. Fourrure soyeuse, moustaches détaillées. Lumière naturelle douce, intérieur douillet. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'bunny-magic',emoji:'🐰',name:'Lapin magique',desc:'Dans un chapeau',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un petit lapin blanc tout doux qui sort d\'un chapeau de magicien noir. Il a l\'air surpris et adorable. Poussière magique dorée autour de lui, décor de scène de théâtre. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'panda-baby',emoji:'🐼',name:'Bébé Panda',desc:'Mignon et dodu',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un bébé panda tout rond et duveteux, assis dans l\'herbe et mangeant une pousse de bambou. Ses grands yeux noirs brillent de bonheur. Fond de forêt de bambous ensoleillée. Rendu 16K cinématographique. Format 9:16 vertical.'}
+]},
+{cat:'🏰 Mondes Magiques',desc:'L\'émerveillement des contes de fées.',items:[
+{id:'castle-fairy',emoji:'🏰',name:'Château Enchanté',desc:'Disney et feux d\'artifice',prompt:'8K ultra HD, 3D photoréaliste style Disney/Pixar. Un magnifique château de conte de fées illuminé la nuit, avec des feux d\'artifice dans le ciel étoilé. Un enfant émerveillé regarde depuis le premier plan de dos. Ambiance féérique absolue. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'cloud-dream',emoji:'☁️',name:'Rêve sur un Nuage',desc:'Ciel pastel et douceur',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant assis sur un gros nuage moelleux et rose, jouant avec des étoiles dorées. Ciel de coucher de soleil flamboyant (rose, violet, orange). Ambiance onirique et paisible. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'underwater',emoji:'🐠',name:'Monde Sous-Marin',desc:'Couleurs et poissons',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant explorant un récif corallien coloré sous l\'eau. Rayons de lumière traversant l\'eau bleue, poissons tropicaux colorés autour de lui. Ambiance magique et paisible. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'candy-land',emoji:'🍭',name:'Pays des Bonbons',desc:'Sucre et couleurs vives',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant joyeux dans un pays fait entièrement de bonbons. Arbres en barbe à papa, rivière de chocolat, montagnes en gâteau. Couleurs ultra saturées et joyeuses. Rendu 16K cinématographique. Format 9:16 vertical.'}
+]},
+{cat:'✨ Ambiances Cinéma',desc:'La magie du grand écran.',items:[
+{id:'golden-hour',emoji:'🌅',name:'Lumière Dorée',desc:'Golden hour parfait',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant baigné dans la lumière dorée du coucher de soleil. Reflets chauds dans les cheveux, catchlights dorés dans les yeux. Arrière-plan de paysage flou. Ambiance cinématographique chaleureuse. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'neon-dream',emoji:'🌆',name:'Rêve Néon',desc:'Lumières cyberpunk',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant dans un décor futuriste avec des lumières néon roses et bleues. Reflets colorés sur son visage, ambiance cyberpunk douce et mignonne. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'autumn-glow',emoji:'🍂',name:'Éclat d\'Automne',desc:'Couleurs chaudes',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant entouré de feuilles d\'automne dorées et rouges qui tombent. Lumière chaude et diffuse, ambiance cosy et poétique. Rendu 16K cinématographique. Format 9:16 vertical.'},
+{id:'winter-wonder',emoji:'❄️',name:'Merveille d\'Hiver',desc:'Neige et magie',prompt:'8K ultra HD, 3D photoréaliste style Pixar. Un enfant emmitouflé dans un manteau d\'hiver, jouant dans la neige. Flocons détaillés, lumière bleutée magique, joues rougies par le froid. Ambiance féérique hivernale. Rendu 16K cinématographique. Format 9:16 vertical.'}
+]}
+];
+
+var state={images:[],isRunning:false,stopRequested:false,queue:[],completed:0,failed:0,selectedStyle:null,mainPrompt:'',intensity:'moderate',durationFrames:153,isLoadingImages:false,currentPreviewUrl:null};
+
+function getApiKey(){try{return (localStorage.getItem(API_KEY_STORAGE)||'').trim()}catch(e){return ''}}
+
+function saveApiKey(){
+var input=document.getElementById('api-key-input');
+if(!input)return;
+var key=input.value.trim();
+if(!key){try{localStorage.removeItem(API_KEY_STORAGE)}catch(e){}updateApiPanel();return}
+try{localStorage.setItem(API_KEY_STORAGE,key);updateApiPanel();showToast('Clé API Enregistrée avec Succès','success')}catch(e){showToast('Erreur','error')}
+}
+
+function updateApiPanel(){
+var panel=document.getElementById('api-panel');
+var input=document.getElementById('api-key-input');
+var statusLine=document.getElementById('api-status-line');
+var statusText=document.getElementById('api-status-text');
+var key=getApiKey();
+if(!panel)return;
+if(key){panel.classList.add('ok');statusLine.classList.add('ok');statusText.textContent='Clé active · '+key.slice(0,8)+'…'+key.slice(-4);input.value=key}
+else{panel.classList.remove('ok');statusLine.classList.remove('ok');statusText.textContent='Aucune clé API enregistrée';input.value=''}
+updateGenerateBtn();
+}
+
+function updateGenerateBtn(){
+var btn=document.getElementById('generate-btn');
+if(!btn)return;
+var hasImages=state.images.length>0;
+var hasKey=!!getApiKey();
+btn.disabled=!hasImages||!hasKey||state.isRunning||state.isLoadingImages;
+if(state.isLoadingImages)btn.textContent='Chargement…';
+else if(state.isRunning)btn.textContent='Création en cours…';
+else if(!hasKey)btn.textContent='Ajoutez votre clé API';
+else if(!hasImages)btn.textContent='Ajoutez des photos';
+else btn.textContent='Créer l\'œuvre ('+state.images.length+')';
+}
+
+function showToast(message,type){
+var toast=document.getElementById('toast');
+var icon=document.getElementById('toast-icon');
+var text=document.getElementById('toast-text');
+if(!toast)return;
+toast.classList.remove('visible','success','error','warn');
+var icons={success:'✓',error:'✕',warn:'⚠'};
+icon.textContent=icons[type]||'✓';
+text.textContent=message;
+toast.classList.add(type||'success');
+setTimeout(function(){toast.classList.add('visible')},10);
+setTimeout(function(){toast.classList.remove('visible')},3500);
+}
+
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function log(msg){console.log('[Kids4K] '+msg)}
+function setStatus(text){
+var bar=document.getElementById('status-bar');
+var txt=document.getElementById('status-text');
+if(!bar)return;
+if(text){bar.classList.add('visible');txt.textContent=text}
+else bar.classList.remove('visible');
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+function fileToDataUri(file){
+return new Promise(function(resolve,reject){
+var reader=new FileReader();
+reader.onload=function(e){resolve(e.target.result)};
+reader.onerror=function(){reject(new Error('Erreur'))};
+reader.readAsDataURL(file);
+});
+}
+
+function generateThumbnail(dataUri){
+return new Promise(function(resolve){
+var img=new Image();
+img.onload=function(){
+try{
+var canvas=document.createElement('canvas');
+var ratio=img.height/img.width;
+canvas.width=THUMBNAIL_MAX_WIDTH;
+canvas.height=Math.round(THUMBNAIL_MAX_WIDTH*ratio);
+var ctx=canvas.getContext('2d');
+ctx.drawImage(img,0,0,canvas.width,canvas.height);
+resolve(canvas.toDataURL('image/jpeg',0.7));
+}catch(e){resolve(dataUri)}
+};
+img.onerror=function(){resolve(dataUri)};
+img.src=dataUri;
+});
+}
+
+function cropToPortrait(dataUri){
+return new Promise(function(resolve){
+var img=new Image();
+img.onload=function(){
+try{
+var targetRatio=9/16;
+var imgRatio=img.width/img.height;
+var canvas=document.createElement('canvas');
+var ctx=canvas.getContext('2d');
+var srcX=0,srcY=0,srcW=img.width,srcH=img.height;
+if(imgRatio>targetRatio){srcW=img.height*targetRatio;srcX=(img.width-srcW)/2}
+else{srcH=img.width/targetRatio;srcY=(img.height-srcH)/2}
+canvas.width=1080;canvas.height=1920;
+ctx.drawImage(img,srcX,srcY,srcW,srcH,0,0,1080,1920);
+resolve(canvas.toDataURL('image/jpeg',0.95));
+}catch(e){resolve(dataUri)}
+};
+img.onerror=function(){resolve(dataUri)};
+img.src=dataUri;
+});
+}
+
+function processOneFile(file){
+if(!file.type.startsWith('image/'))return Promise.resolve(null);
+if(file.size>MAX_IMAGE_SIZE)return Promise.resolve(null);
+return fileToDataUri(file).then(function(dataUri){
+return cropToPortrait(dataUri).then(function(cropped){
+return generateThumbnail(cropped).then(function(thumb){
+return{file:file,dataUri:cropped,thumbnail:thumb,id:Date.now()+Math.random()};
+});
+});
+}).catch(function(){return null});
+}
+
+function handleFiles(files){
+var imageFiles=Array.from(files).filter(function(f){return f.type.startsWith('image/')});
+if(!imageFiles.length)return;
+state.isLoadingImages=true;
+updateGenerateBtn();
+setStatus('Optimisation…');
+var promises=imageFiles.map(function(f){return processOneFile(f)});
+Promise.all(promises).then(function(results){
+results.forEach(function(r){if(r)state.images.push(r)});
+renderImages();
+state.isLoadingImages=false;
+setStatus(null);
+updateGenerateBtn();
+});
+}
+
+function removeImage(id){
+state.images=state.images.filter(function(img){return img.id!==id});
+renderImages();
+updateGenerateBtn();
+}
+
+function renderImages(){
+var grid=document.getElementById('images-grid');
+var html='';
+state.images.forEach(function(img){
+html+='<div class="image-card"><img src="'+(img.thumbnail||img.dataUri)+'"><button class="remove-btn" data-remove="'+img.id+'">✕</button></div>';
+});
+grid.innerHTML=html;
+var btns=grid.querySelectorAll('[data-remove]');
+btns.forEach(function(btn){
+btn.addEventListener('click',function(e){
+e.stopPropagation();
+removeImage(parseFloat(btn.dataset.remove));
+});
+});
+}
+
+function renderStyles(){
+var container=document.getElementById('styles-grid');
+var html='';
+STYLES.forEach(function(cat){
+html+='<div class="style-category-header">'+esc(cat.cat)+'</div>';
+html+='<div class="style-category-desc">'+esc(cat.desc)+'</div>';
+cat.items.forEach(function(s){
+html+='<div class="style-card '+(state.selectedStyle===s.id?'selected':'')+'" data-style="'+s.id+'"><div class="style-emoji">'+s.emoji+'</div><div><div class="style-name">'+esc(s.name)+'</div><div class="style-desc">'+esc(s.desc)+'</div></div></div>';
+});
+});
+container.innerHTML=html;
+var cards=container.querySelectorAll('[data-style]');
+cards.forEach(function(el){
+el.addEventListener('click',function(){
+state.selectedStyle=el.dataset.style;
+renderStyles();
+});
+});
+}
+
+function findStyle(id){
+var found=null;
+STYLES.forEach(function(cat){
+cat.items.forEach(function(s){if(s.id===id)found=s});
+});
+return found;
+}
+
+function buildPrompt(){
+var style=state.selectedStyle?findStyle(state.selectedStyle):null;
+var parts=[];
+parts.push('8K ultra HD, chef-d\'œuvre d\'animation 3D photoréaliste, qualité cinématographique absolue, style Pixar/Disney. Détails parfaits, subsurface scattering, éclairage divin, catchlights magiques. 9:16 vertical.');
+if(style)parts.push(style.prompt);
+if(state.mainPrompt&&state.mainPrompt.trim())parts.push('Direction artistique supplémentaire : '+state.mainPrompt.trim());
+var intensityMap={subtle:'mouvement très subtil et élégant',moderate:'mouvement fluide et cinématographique',strong:'mouvement dynamique et spectaculaire'};
+parts.push(intensityMap[state.intensity]||'mouvement fluide');
+parts.push('Aucun texte, aucun watermark. Format portrait 9:16 strict.');
+return parts.join('. ');
+}
+  
+function apiFetch(url,options){
+var attempt=0;
+function tryFetch(){
+if(state.stopRequested)return Promise.reject(new Error('Arrêt demandé'));
+return fetch(url,options).then(function(res){
+if(res.status===429){return sleep(30000).then(tryFetch)}
+if(res.status===503){return sleep(10000).then(tryFetch)}
+return res;
+}).catch(function(e){
+if(e.message==='Arrêt demandé')throw e;
+attempt++;
+if(attempt>=7)throw e;
+return sleep(5000).then(tryFetch);
+});
+}
+return tryFetch();
+}
+
+function createVideoTask(imageDataUri,prompt){
+var body={model:MODEL_VIDEO,prompt:prompt,image:imageDataUri,num_frames:state.durationFrames,frame_rate:FRAME_RATE};
+return apiFetch(API_BASE+'/videos',{
+method:'POST',
+headers:{'Authorization':'Bearer '+getApiKey(),'Content-Type':'application/json'},
+body:JSON.stringify(body)
+}).then(function(res){
+if(!res.ok)return res.text().then(function(err){throw new Error('HTTP '+res.status+' — '+err.slice(0,200))});
+return res.json().then(function(data){
+var videoId=data.video_id||data.id||data.task_id;
+if(!videoId)throw new Error('Pas de video_id');
+return videoId;
+});
+});
+}
+
+function pollVideo(videoId,onProgress){
+var estimatedSec=45;
+var remaining=Math.max(20,Math.floor(estimatedSec*0.8));
+function countdown(){
+if(remaining<=0)return pollAttempts(0);
+if(state.stopRequested)return Promise.reject(new Error('Arrêt demandé'));
+onProgress('Votre œuvre se prépare… — '+remaining+'s');
+remaining--;
+return sleep(1000).then(countdown);
+}
+function pollAttempts(attempt){
+if(attempt>=MAX_POLL_ATTEMPTS)return Promise.reject(new Error('Délai dépassé'));
+if(state.stopRequested)return Promise.reject(new Error('Arrêt demandé'));
+var url=POLL_BASE+'?video_id='+encodeURIComponent(videoId)+'&model_name='+encodeURIComponent(MODEL_VIDEO);
+return apiFetch(url,{method:'GET',headers:{'Authorization':'Bearer '+getApiKey()}}).then(function(res){
+return res.json().then(function(d){
+var status=d.status||'unknown';
+var progress=d.progress||0;
+onProgress('Création en cours… — '+progress+'%');
+if(status==='completed'||status==='succeeded'||status==='done'){
+var videoUrl=(d.metadata&&d.metadata.url)||d.url||(d.output&&d.output.url);
+if(!videoUrl)throw new Error('Terminé sans URL');
+return videoUrl;
+}
+if(status==='failed'||status==='error'||status==='cancelled')throw new Error('Échec ('+status+')');
+return sleep(POLL_INTERVAL_SEC*1000).then(function(){return pollAttempts(attempt+1)});
+});
+});
+}
+return countdown();
+}
+
+function renderQueue(){
+var queueEl=document.getElementById('queue');
+if(!state.queue.length){queueEl.style.display='none';return}
+queueEl.style.display='block';
+var total=state.queue.length;
+var done=state.completed+state.failed;
+var html='<div class="queue-summary"><span>Progression : '+done+'/'+total+'</span></div>';
+state.queue.slice(0,MAX_VISIBLE_QUEUE).forEach(function(item){
+var icon='○',statusText='En attente',cls='pending';
+if(item.status==='creating'){icon='◐';statusText='Préparation…';cls='creating'}
+else if(item.status==='processing'){icon='◐';statusText=item.progress||'En cours…';cls='processing'}
+else if(item.status==='done'){icon='●';statusText='Terminé';cls='done'}
+else if(item.status==='failed'){icon='✕';statusText='Échec';cls='failed'}
+html+='<div class="queue-item '+cls+'"><div class="q-icon">'+icon+'</div><div class="q-name">Photo '+(item.imageIndex+1)+'</div><div class="q-status">'+esc(statusText)+'</div></div>';
+});
+queueEl.innerHTML=html;
+}
+
+function addToGallery(videoUrl,label){
+var galleryEl=document.getElementById('gallery');
+var galleryGrid=document.getElementById('gallery-grid');
+galleryEl.style.display='block';
+var el=document.createElement('div');
+el.className='gallery-item';
+var html='<video controls preload="metadata" muted playsinline><source src="'+videoUrl+'" type="video/mp4"></video>';
+html+='<div class="g-caption">'+esc(label)+'</div>';
+html+='<div class="g-actions">';
+html+='<button class="g-download" data-url="'+videoUrl+'">💾 Enregistrer</button>';
+html+='<button class="g-tiktok" data-url="'+videoUrl+'" data-label="'+esc(label)+'">📱 TikTok</button>';
+html+='</div>';
+el.innerHTML=html;
+galleryGrid.appendChild(el);
+}
+
+function openTikTokPreview(videoUrl,label){
+var overlay=document.getElementById('tiktok-overlay');
+var video=document.getElementById('tiktok-video');
+var desc=document.getElementById('tiktok-desc');
+var likes=document.getElementById('tiktok-likes');
+var comments=document.getElementById('tiktok-comments');
+var shares=document.getElementById('tiktok-shares');
+if(!overlay||!video)return;
+video.src=videoUrl;
+desc.textContent='Qualité 4K ✨ '+label+' #kids #IA #PourToi';
+likes.textContent=(Math.floor(Math.random()*9)+1)+'.'+Math.floor(Math.random()*9)+'K';
+comments.textContent=Math.floor(Math.random()*800+200).toString();
+shares.textContent=Math.floor(Math.random()*300+20).toString();
+overlay.classList.add('visible');
+state.currentPreviewUrl=videoUrl;
+}
+
+function closeTikTokPreview(){
+var overlay=document.getElementById('tiktok-overlay');
+var video=document.getElementById('tiktok-video');
+if(!overlay)return;
+overlay.classList.remove('visible');
+if(video){video.pause();video.src=''}
+state.currentPreviewUrl=null;
+}
+
+function saveVideo(videoUrl){
+var w=window.open('','_blank');
+if(!w){showToast('Autorisez les pop-ups','warn');return}
+w.document.write('<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sauvegarde</title></head><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><video src="'+videoUrl+'" controls autoplay playsinline style="max-width:100%;max-height:100vh"></video><p style="color:#fff;font-family:sans-serif;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);font-size:.9rem;text-align:center;background:rgba(0,0,0,.8);padding:.8rem 1.5rem;border-radius:10px;">Appui long sur la vidéo<br>→ Enregistrer la vidéo</p></body></html>');
+setTimeout(function(){showToast('Appui long → Enregistrer','success')},600);
+}
+
+function createTaskOnly(item){
+item.status='creating';
+item.progress='Préparation…';
+renderQueue();
+var prompt=buildPrompt();
+item.prompt=prompt;
+log('[Photo '+(item.imageIndex+1)+'] Création…');
+return createVideoTask(item.image.dataUri,prompt).then(function(videoId){
+item.videoId=videoId;
+item.startTime=Date.now();
+item.status='processing';
+item.progress='En cours…';
+renderQueue();
+log('[Photo '+(item.imageIndex+1)+'] Tâche créée');
+return videoId;
+});
+}
+
+function pollTaskAndDisplay(item){
+return pollVideo(item.videoId,function(prog){
+item.progress=prog;
+renderQueue();
+}).then(function(videoUrl){
+var elapsed=Date.now()-item.startTime;
+log('[Photo '+(item.imageIndex+1)+'] Terminée en '+(elapsed/1000).toFixed(1)+'s');
+item.status='done';
+item.videoUrl=videoUrl;
+item.progress='Terminé';
+state.completed++;
+renderQueue();
+updateGenerateBtn();
+addToGallery(videoUrl,'Photo '+(item.imageIndex+1));
+}).catch(function(e){
+if(e.message==='Arrêt demandé'){
+item.status='failed';
+item.progress='Arrêté';
+}else{
+log('[Photo '+(item.imageIndex+1)+'] '+e.message);
+item.status='failed';
+item.progress='Échec';
+state.failed++;
+}
+renderQueue();
+updateGenerateBtn();
+});
+}
+
+function startGeneration(){
+if(state.isRunning||!state.images.length)return;
+if(!getApiKey()){showToast('Ajoutez d abord votre clé API','error');return}
+state.mainPrompt=document.getElementById('main-prompt').value.trim();
+state.isRunning=true;
+state.stopRequested=false;
+state.completed=0;
+state.failed=0;
+createIntervalMs=CREATE_INTERVAL_MIN;
+state.queue=state.images.map(function(img,i){return{imageIndex:i,image:img,status:'pending',progress:null,videoId:null,videoUrl:null,prompt:null,startTime:null}});
+document.getElementById('gallery-grid').innerHTML='';
+document.getElementById('gallery').style.display='none';
+document.getElementById('stop-btn').classList.add('visible');
+document.getElementById('generate-btn').disabled=true;
+renderQueue();
+updateGenerateBtn();
+var totalStart=Date.now();
+var pollingTasks=[];
+function countdown(r,nextNum){
+if(r<=0||state.stopRequested)return Promise.resolve();
+setStatus('Respiration créative… — Photo '+nextNum+'/'+state.queue.length+' dans '+r+'s');
+return sleep(1000).then(function(){return countdown(r-1,nextNum)});
+}
+function finish(){
+var totalElapsed=(Date.now()-totalStart)/1000;
+var summary=state.stopRequested?'Arrêté — '+state.completed+'/'+state.queue.length+' vidéos':'✦ '+state.completed+'/'+state.queue.length+' œuvres créées ✦';
+log(summary);
+setStatus(summary);
+return sleep(4000).then(function(){
+setStatus(null);
+state.isRunning=false;
+state.stopRequested=false;
+document.getElementById('stop-btn').classList.remove('visible');
+updateGenerateBtn();
+showToast(state.completed+' vidéo'+(state.completed>1?'s':'')+' créée'+(state.completed>1?'s':''),'success');
+});
+}
+function processNext(i){
+if(state.stopRequested||i>=state.queue.length){
+if(pollingTasks.length>0)return Promise.allSettled(pollingTasks).then(finish);
+return finish();
+}
+var item=state.queue[i];
+return createTaskOnly(item).then(function(){
+pollingTasks.push(pollTaskAndDisplay(item));
+}).catch(function(e){
+if(e.message!=='Arrêt demandé'){
+log('[Photo '+(i+1)+'] Échec création : '+e.message);
+item.status='failed';
+item.progress='Échec';
+state.failed++;
+renderQueue();
+updateGenerateBtn();
+}
+}).then(function(){
+if(i<state.queue.length-1&&!state.stopRequested){
+var waitSec=Math.ceil(createIntervalMs/1000);
+return countdown(waitSec,i+2);
+}
+}).then(function(){return processNext(i+1)});
+}
+processNext(0).catch(function(e){log('Erreur globale : '+e.message);finish()});
+}
+
+function stopGeneration(){
+if(!state.isRunning)return;
+state.stopRequested=true;
+log('Arrêt demandé');
+setStatus('Arrêt en cours…');
+}
+
+function toggleWakeLock(){
+var el=document.getElementById('wake-status-text');
+var btn=document.getElementById('wake-toggle-btn');
+if(!el||!btn)return;
+if(el.textContent.indexOf('allumé')>-1){
+el.textContent='💤 Veille automatique';
+btn.textContent='Garder l écran allumé';
+try{localStorage.setItem(WAKE_LOCK_PREF,'0')}catch(e){}
+if(window._wakeVideo){try{window._wakeVideo.pause()}catch(e){}}
+showToast('Veille réactivée','warn');
+}else{
+el.textContent='✅ L écran reste allumé';
+btn.textContent='Désactiver';
+try{localStorage.setItem(WAKE_LOCK_PREF,'1')}catch(e){}
+tryWakeLock();
+showToast('L écran va rester allumé','success');
+}
+}
+
+function tryWakeLock(){
+if('wakeLock' in navigator&&navigator.wakeLock.request){
+navigator.wakeLock.request('screen').then(function(sentinel){
+window._wakeSentinel=sentinel;
+}).catch(function(){});
+}
+try{
+var canvas=document.getElementById('noSleepCanvas');
+var video=document.getElementById('noSleepVideo');
+if(canvas&&video&&canvas.captureStream){
+var ctx=canvas.getContext('2d');
+ctx.fillStyle='#000';ctx.fillRect(0,0,2,2);
+var stream=canvas.captureStream(1);
+video.srcObject=stream;
+video.muted=true;
+video.play().catch(function(){});
+window._wakeVideo=video;
+window._wakeStream=stream;
+}
+}catch(e){}
+}
+
+(function init(){
+var saveBtn=document.getElementById('api-save-btn');
+if(saveBtn)saveBtn.addEventListener('click',saveApiKey);
+var stopBtn=document.getElementById('stop-btn');
+if(stopBtn)stopBtn.addEventListener('click',stopGeneration);
+var apiInput=document.getElementById('api-key-input');
+if(apiInput)apiInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();saveApiKey()}});
+document.querySelectorAll('[data-toggle]').forEach(function(header){
+header.addEventListener('click',function(){
+document.getElementById(header.dataset.toggle).classList.toggle('open');
+});
+});
+var uploadZone=document.getElementById('upload-zone');
+var fileInput=document.getElementById('file-input');
+if(uploadZone&&fileInput){
+uploadZone.addEventListener('click',function(){fileInput.click()});
+fileInput.addEventListener('change',function(e){handleFiles(e.target.files);fileInput.value=''});
+}
+var mainPrompt=document.getElementById('main-prompt');
+if(mainPrompt)mainPrompt.addEventListener('input',function(e){state.mainPrompt=e.target.value});
+var durationSelect=document.getElementById('duration-select');
+if(durationSelect)durationSelect.addEventListener('change',function(e){state.durationFrames=parseInt(e.target.value,10)});
+var intensitySelect=document.getElementById('intensity-select');
+if(intensitySelect)intensitySelect.addEventListener('change',function(e){state.intensity=e.target.value});
+var generateBtn=document.getElementById('generate-btn');
+if(generateBtn)generateBtn.addEventListener('click',startGeneration);
+var wakeBtn=document.getElementById('wake-toggle-btn');
+if(wakeBtn)wakeBtn.addEventListener('click',toggleWakeLock);
+var tiktokClose=document.getElementById('tiktok-close');
+if(tiktokClose)tiktokClose.addEventListener('click',closeTikTokPreview);
+var tiktokPublish=document.getElementById('tiktok-publish');
+if(tiktokPublish)tiktokPublish.addEventListener('click',function(){
+if(state.currentPreviewUrl){saveVideo(state.currentPreviewUrl)}
+showToast('Télécharge puis ouvre TikTok 📱','success');
+});
+var galleryGrid=document.getElementById('gallery-grid');
+if(galleryGrid){
+galleryGrid.addEventListener('click',function(e){
+var t=e.target;
+if(t.classList.contains('g-download')){saveVideo(t.dataset.url)}
+if(t.classList.contains('g-tiktok')){openTikTokPreview(t.dataset.url,t.dataset.label||'')}
+});
+}
+try{
+var saved=localStorage.getItem(WAKE_LOCK_PREF);
+if(saved==='1'){
+var wt=document.getElementById('wake-status-text');
+var wb=document.getElementById('wake-toggle-btn');
+if(wt)wt.textContent='✅ L écran reste allumé';
+if(wb)wb.textContent='Désactiver';
+tryWakeLock();
+}
+}catch(e){}
+updateApiPanel();
+renderStyles();
+renderImages();
+renderQueue();
+log('Prêt.');
+})();
+</script>
+</body>
+</html>
