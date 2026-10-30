@@ -500,13 +500,8 @@ return found;
 function buildPrompt(){
 var style=state.selectedStyle?findStyle(state.selectedStyle):null;
 var parts=[];
-if(style){
-  // On coupe le prompt du style s'il est trop long pour l'API
-  var styleText=style.prompt.replace('8K ultra HD, ','').replace('8K ultra HD, chef-d\'œuvre d\'animation 3D photoréaliste, qualité cinématographique absolue, style Pixar/Disney. Détails parfaits, subsurface scattering, éclairage divin, catchlights magiques. 9:16 vertical.','');
-  parts.push(styleText);
-} else {
-  parts.push('Un enfant mignon en 3D style Pixar, éclairage doux.');
-}
+parts.push('Bébé 3D style Pixar ultra détaillé.');
+if(style)parts.push(style.prompt);
 if(state.mainPrompt&&state.mainPrompt.trim())parts.push(state.mainPrompt.trim());
 parts.push('Format 9:16 vertical.');
 return parts.join('. ');
