@@ -500,12 +500,15 @@ return found;
 function buildPrompt(){
 var style=state.selectedStyle?findStyle(state.selectedStyle):null;
 var parts=[];
-parts.push('8K ultra HD, chef-d\'œuvre d\'animation 3D photoréaliste, qualité cinématographique absolue, style Pixar/Disney. Détails parfaits, subsurface scattering, éclairage divin, catchlights magiques. 9:16 vertical.');
-if(style)parts.push(style.prompt);
-if(state.mainPrompt&&state.mainPrompt.trim())parts.push('Direction artistique supplémentaire : '+state.mainPrompt.trim());
-var intensityMap={subtle:'mouvement très subtil et élégant',moderate:'mouvement fluide et cinématographique',strong:'mouvement dynamique et spectaculaire'};
-parts.push(intensityMap[state.intensity]||'mouvement fluide');
-parts.push('Aucun texte, aucun watermark. Format portrait 9:16 strict.');
+if(style){
+  // On coupe le prompt du style s'il est trop long pour l'API
+  var styleText=style.prompt.replace('8K ultra HD, ','').replace('8K ultra HD, chef-d\'œuvre d\'animation 3D photoréaliste, qualité cinématographique absolue, style Pixar/Disney. Détails parfaits, subsurface scattering, éclairage divin, catchlights magiques. 9:16 vertical.','');
+  parts.push(styleText);
+} else {
+  parts.push('Un enfant mignon en 3D style Pixar, éclairage doux.');
+}
+if(state.mainPrompt&&state.mainPrompt.trim())parts.push(state.mainPrompt.trim());
+parts.push('Format 9:16 vertical.');
 return parts.join('. ');
 }
   
